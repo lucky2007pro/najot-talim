@@ -222,7 +222,8 @@ async function submitQuiz() {
     try {
         const payload = {
             username: "Yosh Fazogir",
-            answers: state.answers
+            answers: state.answers,
+            total_questions: total_questions
         };
 
         const res = await fetch(`${API_BASE}/topic/${state.topicId}/quiz/submit/`, {

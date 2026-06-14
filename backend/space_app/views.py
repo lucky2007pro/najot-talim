@@ -32,7 +32,8 @@ class QuizListView(generics.ListAPIView):
     def get_queryset(self):
         topic_id = self.kwargs.get('topic_id')
         if topic_id:
-            return Question.objects.filter(topic_id=topic_id)
+            # Return 10 random questions for the quiz
+            return Question.objects.filter(topic_id=topic_id).order_by('?')[:10]
         return Question.objects.none()
 
 class QuizSubmitView(APIView):
@@ -50,6 +51,7 @@ class QuizSubmitView(APIView):
         # }
         username = request.data.get('username', '')
         answers = request.data.get('answers', {})
+        total_questions = int(request.data.get('total_questions', len(answers)))
         
         try:
             topic = Topic.objects.get(id=topic_id)
@@ -57,7 +59,6 @@ class QuizSubmitView(APIView):
             return Response({"error": "Mavzu topilmadi"}, status=status.HTTP_404_NOT_FOUND)
 
         score = 0
-        total_questions = topic.questions.count()
 
         for q_id, c_id in answers.items():
             try:
