@@ -13,42 +13,29 @@ let state = {
     score: 0 // Local offline score tracking
 };
 
-// Screens
-const screens = {
-    intro: document.getElementById('screen-intro'),
-    explorer: document.getElementById('screen-explorer'),
-    education: document.getElementById('screen-education'),
-    quiz: document.getElementById('screen-quiz'),
-    result: document.getElementById('screen-result')
-};
-
-// Planets Data for Explorer
-const planetsData = [
-    { name: "Quyosh", img: "https://upload.wikimedia.org/wikipedia/commons/b/b4/The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg", desc: "Quyosh tizimining markazi bo'lgan bahaybat va juda issiq yulduz." },
-    { name: "Merkuriy", img: "https://upload.wikimedia.org/wikipedia/commons/4/4a/Mercury_in_true_color.jpg", desc: "Quyoshga eng yaqin va eng tez aylanadigan kichik sayyora. Unda havo yo'q." },
-    { name: "Venera", img: "https://upload.wikimedia.org/wikipedia/commons/e/e5/Venus-real_color.jpg", desc: "Eng issiq sayyora. U osmonda tunda juda yorqin yulduzdek ko'rinadi." },
-    { name: "Yer", img: "https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg", desc: "Bizning uyimiz. Hayot, o'simliklar va suv bor bo'lgan yagona ajoyib sayyora!" },
-    { name: "Mars", img: "https://upload.wikimedia.org/wikipedia/commons/0/02/OSIRIS_Mars_true_color.jpg", desc: "Qizil sayyora. Uning tuprog'ida temir moddasi ko'p bo'lgani uchun qizil rangda." },
-    { name: "Yupiter", img: "https://upload.wikimedia.org/wikipedia/commons/e/e2/Jupiter.jpg", desc: "Eng katta sayyora. U asosan gazlardan iborat va yuzasida bahaybat bo'ronlar aylanib yuradi." },
-    { name: "Saturn", img: "https://upload.wikimedia.org/wikipedia/commons/c/c7/Saturn_during_Equinox.jpg", desc: "Koinotdagi eng go'zal sayyoralardan biri, uning atrofida muz va toshlardan iborat chiroyli halqalari bor." },
-    { name: "Uran", img: "https://upload.wikimedia.org/wikipedia/commons/3/3d/Uranus2.jpg", desc: "Sovuq va moviy sayyora. U Quyosh atrofida xuddi dumalab ketayotgandek yonboshlab aylanadi." },
-    { name: "Neptun", img: "https://upload.wikimedia.org/wikipedia/commons/6/63/Neptune_-_Voyager_2_%2829347980845%29_flatten_crop.jpg", desc: "Quyoshdan eng uzoqda joylashgan, juda sovuq va kuchli shamollar esadigan ko'k sayyora." }
-];
+// Screens - only grab elements that exist on this page
+const screens = {};
+['intro', 'education', 'quiz', 'result'].forEach(name => {
+    const el = document.getElementById('screen-' + name);
+    if (el) screens[name] = el;
+});
 
 function showScreen(screenName) {
     Object.values(screens).forEach(s => s.classList.add('hidden'));
-    screens[screenName].classList.remove('hidden');
-    // Basic re-trigger animation
-    screens[screenName].style.animation = 'none';
-    screens[screenName].offsetHeight; 
-    screens[screenName].style.animation = ''; 
-    screens[screenName].style.opacity = '1'; // Force opacity
+    if (screens[screenName]) {
+        screens[screenName].classList.remove('hidden');
+        screens[screenName].style.animation = 'none';
+        screens[screenName].offsetHeight; 
+        screens[screenName].style.animation = ''; 
+        screens[screenName].style.opacity = '1';
+    }
 }
 
 // --- Network / Offline Helper ---
 async function fetchWithCache(url, cacheKey) {
     try {
         const res = await fetch(url);
+        if (!res.ok) throw new Error('Server error: ' + res.status);
         const data = await res.json();
         localStorage.setItem(cacheKey, JSON.stringify(data));
         return data;
@@ -69,53 +56,19 @@ async function init() {
         if (topics && topics.length > 0) {
             const topic = topics[0];
             state.topicId = topic.id;
-            document.getElementById('intro-title').innerText = topic.title;
-            document.getElementById('intro-desc').innerText = topic.description;
+            const titleEl = document.getElementById('intro-title');
+            const descEl = document.getElementById('intro-desc');
+            if (titleEl) titleEl.innerText = topic.title;
+            if (descEl) descEl.innerText = topic.description;
         } else {
-            document.getElementById('intro-title').innerText = "Ma'lumot topilmadi";
+            const titleEl = document.getElementById('intro-title');
+            if (titleEl) titleEl.innerText = "Ma'lumot topilmadi";
         }
     } catch (error) {
         console.error("API error:", error);
-        document.getElementById('intro-title').innerText = "Oflayn rejim (Ma'lumotlar yo'q)";
+        const titleEl = document.getElementById('intro-title');
+        if (titleEl) titleEl.innerText = "Oflayn rejim (Ma'lumotlar yo'q)";
     }
-}
-
-// --- Interactive Explorer ---
-function openExplorer() {
-    showScreen('explorer');
-    const grid = document.getElementById('planet-grid');
-    grid.innerHTML = '';
-    planetsData.forEach((p, idx) => {
-        const card = document.createElement('div');
-        card.className = 'bg-white/10 border border-white/20 rounded-2xl p-4 cursor-pointer hover:bg-white/20 transition-all transform hover:scale-105 hover:-translate-y-1 shadow-lg flex flex-col items-center justify-center';
-        card.onclick = () => showPlanetDetail(idx);
-        card.innerHTML = `
-            <img src="${p.img}" alt="${p.name}" class="w-24 h-24 md:w-32 md:h-32 object-cover rounded-full mb-3 shadow-[0_0_15px_rgba(255,255,255,0.2)]">
-            <h3 class="font-fredoka text-xl text-white">${p.name}</h3>
-        `;
-        grid.appendChild(card);
-    });
-}
-
-function showPlanetDetail(idx) {
-    const p = planetsData[idx];
-    document.getElementById('modal-title').innerText = p.name;
-    document.getElementById('modal-desc').innerText = p.desc;
-    document.getElementById('modal-img').src = p.img;
-    
-    const modal = document.getElementById('planet-modal');
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
-}
-
-function closePlanetDetail() {
-    const modal = document.getElementById('planet-modal');
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-}
-
-function goBackToIntro() {
-    showScreen('intro');
 }
 
 // --- Education ---
@@ -128,8 +81,10 @@ async function startEducation() {
         renderSection();
     } catch (e) {
         console.error(e);
-        document.getElementById('edu-title').innerText = "Oflayn xatolik";
-        document.getElementById('edu-content').innerText = "Darsliklarni yuklash uchun internet kerak.";
+        const titleEl = document.getElementById('edu-title');
+        const contentEl = document.getElementById('edu-content');
+        if (titleEl) titleEl.innerText = "Oflayn xatolik";
+        if (contentEl) contentEl.innerText = "Darsliklarni yuklash uchun internet kerak.";
     }
 }
 
@@ -179,6 +134,7 @@ async function startQuiz() {
         renderQuestion();
     } catch (e) {
         console.error(e);
+        document.getElementById('quiz-question').innerText = "Savollarni yuklashda xatolik.";
     }
 }
 
@@ -194,6 +150,7 @@ function renderQuestion() {
     state.selectedChoiceId = null;
     state.selectedChoiceIsCorrect = false;
     document.getElementById('btn-next-quiz').disabled = true;
+    document.getElementById('btn-next-quiz').style.display = ''; // Re-show button
 
     const progress = ((state.currentQuestionIndex + 1) / state.questions.length) * 100;
     document.getElementById('quiz-progress').style.width = `${progress}%`;
@@ -215,19 +172,19 @@ function renderQuestion() {
     if (state.currentQuestionIndex === state.questions.length - 1) {
         nextBtn.innerText = "Natijani ko'rish 🏆";
     } else {
-        nextBtn.innerText = "Javobni tasdiqlash ✅";
+        nextBtn.innerText = "Keyingi savol ➡️";
     }
 }
 
 function selectChoice(choiceId, isCorrect, element) {
-    if (document.getElementById('btn-next-quiz').disabled === false) return; // Allready answered this question
+    if (document.getElementById('btn-next-quiz').disabled === false) return;
 
     state.selectedChoiceId = choiceId;
     state.selectedChoiceIsCorrect = isCorrect;
     
     // Disable other choices
     document.querySelectorAll('.choice-btn').forEach(b => {
-        b.onclick = null; // Remove listener so they can't click again
+        b.onclick = null;
         b.style.opacity = '0.5';
     });
     
@@ -236,7 +193,7 @@ function selectChoice(choiceId, isCorrect, element) {
     // Interactive Reaction
     if (isCorrect) {
         element.classList.add('correct');
-        state.score++; // local tally
+        state.score++;
         if (typeof confetti === 'function') {
             confetti({
                 particleCount: 100,
@@ -247,7 +204,6 @@ function selectChoice(choiceId, isCorrect, element) {
     } else {
         element.classList.add('wrong');
         element.classList.add('shake');
-        // Optionally show which one was correct
         const allBtns = document.querySelectorAll('.choice-btn');
         state.questions[state.currentQuestionIndex].choices.forEach((c, idx) => {
             if (c.is_correct) {
@@ -301,17 +257,16 @@ async function submitQuiz() {
 
     } catch (e) {
         console.log("Offline mode: calculating local score.");
-        // OFFLINE Fallback
         showScreen('result');
         document.getElementById('score-display').innerText = `${state.score} / ${total_questions}`;
         
         const percentage = (state.score / total_questions) * 100;
         if (percentage === 100) {
-            finalMessage = "Ajoyib! (Oflayn hisoblandi)";
+            finalMessage = "Ajoyib!";
             triggerVictoryConfetti();
         }
-        else if (percentage >= 60) finalMessage = "Yaxshi natija! (Oflayn hisoblandi)";
-        else finalMessage = "Yana o'qib chiqish kerak! (Oflayn hisoblandi)";
+        else if (percentage >= 60) finalMessage = "Yaxshi natija!";
+        else finalMessage = "Yana o'qib chiqish kerak!";
         
         document.getElementById('result-message').innerText = finalMessage;
     }
