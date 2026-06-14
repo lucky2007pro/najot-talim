@@ -16,10 +16,24 @@ let state = {
 // Screens
 const screens = {
     intro: document.getElementById('screen-intro'),
+    explorer: document.getElementById('screen-explorer'),
     education: document.getElementById('screen-education'),
     quiz: document.getElementById('screen-quiz'),
     result: document.getElementById('screen-result')
 };
+
+// Planets Data for Explorer
+const planetsData = [
+    { name: "Quyosh", img: "https://upload.wikimedia.org/wikipedia/commons/b/b4/The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg", desc: "Quyosh tizimining markazi bo'lgan bahaybat va juda issiq yulduz." },
+    { name: "Merkuriy", img: "https://upload.wikimedia.org/wikipedia/commons/4/4a/Mercury_in_true_color.jpg", desc: "Quyoshga eng yaqin va eng tez aylanadigan kichik sayyora. Unda havo yo'q." },
+    { name: "Venera", img: "https://upload.wikimedia.org/wikipedia/commons/e/e5/Venus-real_color.jpg", desc: "Eng issiq sayyora. U osmonda tunda juda yorqin yulduzdek ko'rinadi." },
+    { name: "Yer", img: "https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg", desc: "Bizning uyimiz. Hayot, o'simliklar va suv bor bo'lgan yagona ajoyib sayyora!" },
+    { name: "Mars", img: "https://upload.wikimedia.org/wikipedia/commons/0/02/OSIRIS_Mars_true_color.jpg", desc: "Qizil sayyora. Uning tuprog'ida temir moddasi ko'p bo'lgani uchun qizil rangda." },
+    { name: "Yupiter", img: "https://upload.wikimedia.org/wikipedia/commons/e/e2/Jupiter.jpg", desc: "Eng katta sayyora. U asosan gazlardan iborat va yuzasida bahaybat bo'ronlar aylanib yuradi." },
+    { name: "Saturn", img: "https://upload.wikimedia.org/wikipedia/commons/c/c7/Saturn_during_Equinox.jpg", desc: "Koinotdagi eng go'zal sayyoralardan biri, uning atrofida muz va toshlardan iborat chiroyli halqalari bor." },
+    { name: "Uran", img: "https://upload.wikimedia.org/wikipedia/commons/3/3d/Uranus2.jpg", desc: "Sovuq va moviy sayyora. U Quyosh atrofida xuddi dumalab ketayotgandek yonboshlab aylanadi." },
+    { name: "Neptun", img: "https://upload.wikimedia.org/wikipedia/commons/6/63/Neptune_-_Voyager_2_%2829347980845%29_flatten_crop.jpg", desc: "Quyoshdan eng uzoqda joylashgan, juda sovuq va kuchli shamollar esadigan ko'k sayyora." }
+];
 
 function showScreen(screenName) {
     Object.values(screens).forEach(s => s.classList.add('hidden'));
@@ -64,6 +78,46 @@ async function init() {
         console.error("API error:", error);
         document.getElementById('intro-title').innerText = "Oflayn rejim (Ma'lumotlar yo'q)";
     }
+}
+
+}
+
+// --- Interactive Explorer ---
+function openExplorer() {
+    showScreen('explorer');
+    const grid = document.getElementById('planet-grid');
+    grid.innerHTML = '';
+    planetsData.forEach((p, idx) => {
+        const card = document.createElement('div');
+        card.className = 'bg-white/10 border border-white/20 rounded-2xl p-4 cursor-pointer hover:bg-white/20 transition-all transform hover:scale-105 hover:-translate-y-1 shadow-lg flex flex-col items-center justify-center';
+        card.onclick = () => showPlanetDetail(idx);
+        card.innerHTML = `
+            <img src="${p.img}" alt="${p.name}" class="w-24 h-24 md:w-32 md:h-32 object-cover rounded-full mb-3 shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+            <h3 class="font-fredoka text-xl text-white">${p.name}</h3>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function showPlanetDetail(idx) {
+    const p = planetsData[idx];
+    document.getElementById('modal-title').innerText = p.name;
+    document.getElementById('modal-desc').innerText = p.desc;
+    document.getElementById('modal-img').src = p.img;
+    
+    const modal = document.getElementById('planet-modal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function closePlanetDetail() {
+    const modal = document.getElementById('planet-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+
+function goBackToIntro() {
+    showScreen('intro');
 }
 
 // --- Education ---
