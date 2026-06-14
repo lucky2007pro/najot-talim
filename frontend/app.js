@@ -183,6 +183,11 @@ async function startQuiz() {
 }
 
 function renderQuestion() {
+    if (!state.questions || state.questions.length === 0) {
+        document.getElementById('quiz-question').innerText = "Kechirasiz, savollar topilmadi. (Baza bo'sh yoki yangilanmagan)";
+        document.getElementById('btn-next-quiz').style.display = 'none';
+        return;
+    }
     const q = state.questions[state.currentQuestionIndex];
     if (!q) return;
 
