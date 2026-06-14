@@ -54,6 +54,31 @@ def seed():
         Choice.objects.create(question=q3, text="Yulduz", is_correct=True)
         Choice.objects.create(question=q3, text="Sun'iy yo'ldosh", is_correct=False)
 
+        q4 = Question.objects.create(topic=topic, text="Quyosh tizimidagi eng katta sayyora qaysi?", order=4)
+        Choice.objects.create(question=q4, text="Yupiter", is_correct=True)
+        Choice.objects.create(question=q4, text="Saturn", is_correct=False)
+        Choice.objects.create(question=q4, text="Venera", is_correct=False)
+
+        q5 = Question.objects.create(topic=topic, text="Yerdan tungi osmonda ko'rinadigan eng katta va yorug' jism nima?", order=5)
+        Choice.objects.create(question=q5, text="Quyosh", is_correct=False)
+        Choice.objects.create(question=q5, text="Mars", is_correct=False)
+        Choice.objects.create(question=q5, text="Oy", is_correct=True)
+
+        q6 = Question.objects.create(topic=topic, text="Qaysi sayyoraning atrofida chiroyli halqalari bor?", order=6)
+        Choice.objects.create(question=q6, text="Yer", is_correct=False)
+        Choice.objects.create(question=q6, text="Saturn", is_correct=True)
+        Choice.objects.create(question=q6, text="Merkuriy", is_correct=False)
+
+        q7 = Question.objects.create(topic=topic, text="Koinotga birinchi bo'lib qaysi jonivor uchgan?", order=7)
+        Choice.objects.create(question=q7, text="Maymun", is_correct=False)
+        Choice.objects.create(question=q7, text="It (Layka)", is_correct=True)
+        Choice.objects.create(question=q7, text="Mushuk", is_correct=False)
+
+        q8 = Question.objects.create(topic=topic, text="Odamzot birinchi marta qayerga qadam bosgan?", order=8)
+        Choice.objects.create(question=q8, text="Oyga", is_correct=True)
+        Choice.objects.create(question=q8, text="Marsga", is_correct=False)
+        Choice.objects.create(question=q8, text="Quyoshga", is_correct=False)
+
     print("Database seeded successfully!")
 
 if __name__ == "__main__":

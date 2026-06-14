@@ -179,8 +179,16 @@ function selectChoice(choiceId, isCorrect, element) {
     if (isCorrect) {
         element.classList.add('correct');
         state.score++; // local tally
+        if (typeof confetti === 'function') {
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        }
     } else {
         element.classList.add('wrong');
+        element.classList.add('shake');
         // Optionally show which one was correct
         const allBtns = document.querySelectorAll('.choice-btn');
         state.questions[state.currentQuestionIndex].choices.forEach((c, idx) => {
@@ -227,6 +235,10 @@ async function submitQuiz() {
         showScreen('result');
         document.getElementById('score-display').innerText = `${data.score} / ${data.max_score}`;
         document.getElementById('result-message').innerText = data.message;
+        
+        if (data.score === data.max_score && data.max_score > 0) {
+            triggerVictoryConfetti();
+        }
 
     } catch (e) {
         console.log("Offline mode: calculating local score.");
@@ -235,11 +247,42 @@ async function submitQuiz() {
         document.getElementById('score-display').innerText = `${state.score} / ${total_questions}`;
         
         const percentage = (state.score / total_questions) * 100;
-        if (percentage === 100) finalMessage = "Ajoyib! (Oflayn hisoblandi)";
+        if (percentage === 100) {
+            finalMessage = "Ajoyib! (Oflayn hisoblandi)";
+            triggerVictoryConfetti();
+        }
         else if (percentage >= 60) finalMessage = "Yaxshi natija! (Oflayn hisoblandi)";
         else finalMessage = "Yana o'qib chiqish kerak! (Oflayn hisoblandi)";
         
         document.getElementById('result-message').innerText = finalMessage;
+    }
+}
+
+function triggerVictoryConfetti() {
+    if (typeof confetti === 'function') {
+        var duration = 3 * 1000;
+        var end = Date.now() + duration;
+
+        (function frame() {
+            confetti({
+                particleCount: 5,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0 },
+                colors: ['#00D2D3', '#facc15']
+            });
+            confetti({
+                particleCount: 5,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1 },
+                colors: ['#00D2D3', '#facc15']
+            });
+
+            if (Date.now() < end) {
+                requestAnimationFrame(frame);
+            }
+        }());
     }
 }
 
