@@ -126,7 +126,17 @@ function nextEducation() {
 async function startQuiz() {
     showScreen('quiz');
     try {
-        const data = await fetchWithCache(`${API_BASE}/topic/${state.topicId}/quiz/`, `api_quiz_${state.topicId}`);
+        // Har doim yangi tasodifiy savollar olish uchun cache'dan foydalanmaymiz
+        // Eski cache'ni tozalaymiz
+        localStorage.removeItem(`api_quiz_${state.topicId}`);
+        
+        const res = await fetch(`${API_BASE}/topic/${state.topicId}/quiz/`);
+        if (!res.ok) throw new Error('Server error: ' + res.status);
+        const data = await res.json();
+        
+        // Offline uchun cache'ga saqlaymiz
+        localStorage.setItem(`api_quiz_${state.topicId}`, JSON.stringify(data));
+        
         state.questions = data;
         state.currentQuestionIndex = 0;
         state.answers = {};
@@ -134,7 +144,18 @@ async function startQuiz() {
         renderQuestion();
     } catch (e) {
         console.error(e);
-        document.getElementById('quiz-question').innerText = "Savollarni yuklashda xatolik.";
+        // Offline bo'lsa, cache'dan foydalanishga harakat qilamiz
+        const cached = localStorage.getItem(`api_quiz_${state.topicId}`);
+        if (cached) {
+            const data = JSON.parse(cached);
+            state.questions = data;
+            state.currentQuestionIndex = 0;
+            state.answers = {};
+            state.score = 0;
+            renderQuestion();
+        } else {
+            document.getElementById('quiz-question').innerText = "Savollarni yuklashda xatolik.";
+        }
     }
 }
 
@@ -308,5 +329,5 @@ function restart() {
     }
 }
 
-// Start app
-window.onload = init;
+// Note: init() is called by enterApp() in index.html
+// Do NOT auto-call init() here as it conflicts with the landing page

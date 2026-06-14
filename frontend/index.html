@@ -227,8 +227,20 @@
         // Switch from Landing to App
         function enterApp() {
             document.getElementById('landing-page').classList.add('hidden');
-            document.getElementById('app-container').classList.remove('hidden');
+            const appContainer = document.getElementById('app-container');
+            appContainer.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
+            
+            // Reset state for fresh start
+            state.topicId = null;
+            state.sections = [];
+            state.currentSectionIndex = 0;
+            state.questions = [];
+            state.currentQuestionIndex = 0;
+            state.answers = {};
+            state.selectedChoiceId = null;
+            state.selectedChoiceIsCorrect = false;
+            state.score = 0;
             
             // Start the actual app logic
             init();
@@ -236,9 +248,16 @@
         }
 
         function restartApp() {
-            document.getElementById('landing-page').classList.remove('hidden');
+            // Hide all app screens first
+            Object.values(screens).forEach(s => s.classList.add('hidden'));
+            
+            // Hide app container, show landing page
             document.getElementById('app-container').classList.add('hidden');
+            document.getElementById('landing-page').classList.remove('hidden');
             document.body.style.overflow = 'auto';
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
         }
     </script>
     <script>

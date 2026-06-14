@@ -23,18 +23,18 @@ class SectionListView(generics.ListAPIView):
             return Section.objects.filter(topic_id=topic_id)
         return Section.objects.none()
 
-class QuizListView(generics.ListAPIView):
+class QuizListView(APIView):
     """
-    Interaktiv qism: Berilgan mavzu bo'yicha savollar va variantlar (to'g'ri javobsiz)
+    Interaktiv qism: Berilgan mavzu bo'yicha 10 ta tasodifiy savol va variantlar
     """
-    serializer_class = QuestionSerializer
 
-    def get_queryset(self):
-        topic_id = self.kwargs.get('topic_id')
-        if topic_id:
-            # Return 10 random questions for the quiz
-            return Question.objects.filter(topic_id=topic_id).order_by('?')[:10]
-        return Question.objects.none()
+    def get(self, request, topic_id):
+        # Barcha savollarni olish va 10 ta tasodifiy tanlash
+        questions = list(
+            Question.objects.filter(topic_id=topic_id).order_by('?')[:10]
+        )
+        serializer = QuestionSerializer(questions, many=True)
+        return Response(serializer.data)
 
 class QuizSubmitView(APIView):
     """

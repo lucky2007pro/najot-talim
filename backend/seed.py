@@ -7,42 +7,119 @@ django.setup()
 from space_app.models import Topic, Section, Question, Choice
 
 def seed():
-    # Topics
-    topic, created = Topic.objects.get_or_create(
+    # ========================================
+    # TOPIC 1: Quyosh tizimi sirlari
+    # ========================================
+    topic1, _ = Topic.objects.get_or_create(
+        title="Quyosh tizimi sirlari",
+        defaults={"description": "Quyosh tizimi va sayyoralar haqida qiziqarli faktlar!"}
+    )
+
+    # Sections for Topic 1
+    if not Section.objects.filter(topic=topic1).exists():
+        Section.objects.create(
+            topic=topic1,
+            title="Quyosh tizimi nima?",
+            content="Quyosh tizimi – bu Quyosh va uning atrofida aylanadigan 8 ta sayyora, ularning yo'ldoshlari, asteroidlar va kometalardan iborat ulkan kosmik oila. Quyosh bu oilaning markazi va eng katta a'zosi hisoblanadi.",
+            media_url="/static/assets/sun.png",
+            order=1
+        )
+        Section.objects.create(
+            topic=topic1,
+            title="Ichki sayyoralar",
+            content="Merkuriy, Venera, Yer va Mars – bu ichki sayyoralar deyiladi. Ular kichik, tosh va metallardan iborat. Merkuriy eng kichik va tez, Venera eng issiq, Yer hayot bor bo'lgan yagona sayyora, Mars esa qizil sayyora deb ataladi.",
+            media_url="/static/assets/earth.png",
+            order=2
+        )
+        Section.objects.create(
+            topic=topic1,
+            title="Tashqi sayyoralar",
+            content="Yupiter, Saturn, Uran va Neptun – tashqi sayyoralar. Ular juda katta va asosan gazlardan iborat. Yupiter eng katta, Saturn halqalari bilan mashhur, Uran yonboshlab aylanadi, Neptun esa eng sovuq sayyora.",
+            media_url="/static/assets/mars.png",
+            order=3
+        )
+
+    # Questions for Topic 1 - 30 ta
+    print("Topic 1 uchun savollar yangilanmoqda...")
+    Question.objects.filter(topic=topic1).delete()
+
+    questions_topic1 = [
+        {"q": "Quyosh tizimida nechta sayyora bor?", "options": [("6 ta", False), ("8 ta", True), ("10 ta", False)]},
+        {"q": "Quyoshga eng yaqin sayyora qaysi?", "options": [("Venera", False), ("Merkuriy", True), ("Yer", False)]},
+        {"q": "Quyosh tizimidagi eng kichik sayyora qaysi?", "options": [("Mars", False), ("Merkuriy", True), ("Pluton", False)]},
+        {"q": "Quyosh tizimidagi eng katta sayyora qaysi?", "options": [("Saturn", False), ("Yupiter", True), ("Neptun", False)]},
+        {"q": "Yer Quyoshdan nechanchi sayyora?", "options": [("Ikkinchi", False), ("Uchinchi", True), ("To'rtinchi", False)]},
+        {"q": "Qaysi sayyora 'Qizil sayyora' deb ataladi?", "options": [("Yupiter", False), ("Mars", True), ("Venera", False)]},
+        {"q": "Qaysi sayyoraning chiroyli halqalari bor?", "options": [("Yupiter", False), ("Saturn", True), ("Uran", False)]},
+        {"q": "Quyosh nima hisoblanadi?", "options": [("Sayyora", False), ("Yulduz", True), ("Asteroid", False)]},
+        {"q": "Quyosh tizimidagi eng issiq sayyora qaysi?", "options": [("Merkuriy", False), ("Venera", True), ("Mars", False)]},
+        {"q": "Quyosh tizimidagi eng sovuq sayyora qaysi?", "options": [("Uran", False), ("Neptun", True), ("Saturn", False)]},
+        {"q": "Quyosh asosan qaysi gazdan iborat?", "options": [("Kislorod", False), ("Vodorod", True), ("Azot", False)]},
+        {"q": "Oy nima hisoblanadi?", "options": [("Sayyora", False), ("Yulduz", False), ("Tabiiy yo'ldosh", True)]},
+        {"q": "Mars sayyorasida nechta tabiiy yo'ldosh bor?", "options": [("1 ta", False), ("2 ta", True), ("3 ta", False)]},
+        {"q": "Yupiter sayyorasidagi katta qizil dog' nima?", "options": [("Yangi vulqon", False), ("Ulkan bo'ron", True), ("Suvli okean", False)]},
+        {"q": "Qaysi sayyora yonboshlab aylanadi?", "options": [("Neptun", False), ("Uran", True), ("Saturn", False)]},
+        {"q": "Asteroid kamar qaysi ikki sayyora orasida joylashgan?", "options": [("Yer va Mars", False), ("Mars va Yupiter", True), ("Yupiter va Saturn", False)]},
+        {"q": "Pluton hozir nima deb tasniflanadi?", "options": [("Sayyora", False), ("Mitti sayyora", True), ("Yulduz", False)]},
+        {"q": "Quyosh tizimidagi eng yirik tabiiy yo'ldosh qaysi?", "options": [("Oy", False), ("Ganimed", True), ("Titan", False)]},
+        {"q": "Qaysi sayyorada suyuq suv bo'lishi mumkin deb taxmin qilinadi?", "options": [("Venera", False), ("Mars", True), ("Merkuriy", False)]},
+        {"q": "Yer o'z o'qi atrofida qancha vaqtda bir marta aylanadi?", "options": [("12 soat", False), ("24 soat", True), ("48 soat", False)]},
+        {"q": "Yer Quyosh atrofida qancha vaqtda bir marta aylanadi?", "options": [("30 kun", False), ("365 kun", True), ("100 kun", False)]},
+        {"q": "Kometa nima?", "options": [("Muzlik va chang aralashmasi", True), ("Kichik sayyora", False), ("Yangi yulduz", False)]},
+        {"q": "Quyosh yorug'ligi Yerga yetib kelishi uchun qancha vaqt ketadi?", "options": [("1 sekund", False), ("8 daqiqa", True), ("1 soat", False)]},
+        {"q": "Qaysi sayyorada bir kun bir yildan uzun?", "options": [("Mars", False), ("Venera", True), ("Yupiter", False)]},
+        {"q": "Saturn halqalari asosan nimadan iborat?", "options": [("Muz va tosh", True), ("Gaz", False), ("Suv", False)]},
+        {"q": "Neptun sayyorasi qanday rangda ko'rinadi?", "options": [("Qizil", False), ("Ko'k", True), ("Sariq", False)]},
+        {"q": "Quyosh tizimida eng tez aylanadigan sayyora qaysi?", "options": [("Yer", False), ("Yupiter", True), ("Mars", False)]},
+        {"q": "Venera sayyorasini yana qanday nom bilan atashadi?", "options": [("Tong yulduzi", True), ("Qizil yulduz", False), ("Shimol yulduzi", False)]},
+        {"q": "Merkuriy sayyorasida atmosfera bormi?", "options": [("Ha, juda qalin", False), ("Deyarli yo'q", True), ("Ha, kislorodli", False)]},
+        {"q": "Quyosh tizimi qaysi galaktikada joylashgan?", "options": [("Andromeda", False), ("Somon yo'li", True), ("Uchburchak", False)]},
+    ]
+
+    for index, q_data in enumerate(questions_topic1):
+        q = Question.objects.create(topic=topic1, text=q_data["q"], order=index+1)
+        for choice_text, is_correct in q_data["options"]:
+            Choice.objects.create(question=q, text=choice_text, is_correct=is_correct)
+
+    print(f"Topic 1: {len(questions_topic1)} ta savol qo'shildi!")
+
+    # ========================================
+    # TOPIC 2: Koinot Sirlari
+    # ========================================
+    topic2, _ = Topic.objects.get_or_create(
         title="Koinot Sirlari",
-        description="Bolalar uchun koinot, sayyoralar va yulduzlar haqida qiziqarli sayohat!"
+        defaults={"description": "Bolalar uchun koinot, sayyoralar va yulduzlar haqida qiziqarli sayohat!"}
     )
     
-    # Sections
-    if not Section.objects.filter(topic=topic).exists():
+    # Sections for Topic 2
+    if not Section.objects.filter(topic=topic2).exists():
         Section.objects.create(
-            topic=topic,
+            topic=topic2,
             title="Quyosh tizimi",
             content="Quyosh tizimi – bu Quyosh va uning atrofida aylanadigan sayyoralardan iborat katta oila.",
             media_url="/static/assets/sun.png",
             order=1
         )
         Section.objects.create(
-            topic=topic,
+            topic=topic2,
             title="Bizning Uyimiz - Yer",
             content="Yer – Quyosh tizimidagi hayot bor bo'lgan yagona sayyora. U asosan suvdan iborat bo'lgani uchun moviy ko'rinadi.",
             media_url="/static/assets/earth.png",
             order=2
         )
         Section.objects.create(
-            topic=topic,
+            topic=topic2,
             title="Qizil Sayyora",
             content="Mars – Yerdan keyingi sayyora. Uning tuprog'ida temir ko'p bo'lgani uchun u qip-qizil bo'lib ko'rinadi.",
             media_url="/static/assets/mars.png",
             order=3
         )
 
-    # Questions - Reset and recreate to ensure we have the new bank of questions
-    print("O'chirilyapti: Eski savollar...")
-    Question.objects.filter(topic=topic).delete()
+    # Questions for Topic 2 - 30 ta
+    print("Topic 2 uchun savollar yangilanmoqda...")
+    Question.objects.filter(topic=topic2).delete()
 
-    print("Qo'shilyapti: Yangi 30+ ta savollar...")
-    questions_data = [
+    questions_topic2 = [
         {"q": "Quyosh tizimida biz yashaydigan sayyora qaysi?", "options": [("Mars", False), ("Yer", True), ("Oy", False)]},
         {"q": "Mars sayyorasi qanday rangda?", "options": [("Ko'k", False), ("Yashil", False), ("Qizil", True)]},
         {"q": "Quyosh nima?", "options": [("Sayyora", False), ("Yulduz", True), ("Sun'iy yo'ldosh", False)]},
@@ -75,12 +152,12 @@ def seed():
         {"q": "Sayyoralar nima atrofida aylanadi?", "options": [("Oy atrofida", False), ("Yer atrofida", False), ("Quyosh atrofida", True)]}
     ]
 
-    for index, q_data in enumerate(questions_data):
-        q = Question.objects.create(topic=topic, text=q_data["q"], order=index+1)
+    for index, q_data in enumerate(questions_topic2):
+        q = Question.objects.create(topic=topic2, text=q_data["q"], order=index+1)
         for choice_text, is_correct in q_data["options"]:
             Choice.objects.create(question=q, text=choice_text, is_correct=is_correct)
 
-    print(f"Jami {len(questions_data)} ta savol bazaga kiritildi!")
+    print(f"Topic 2: {len(questions_topic2)} ta savol qo'shildi!")
     print("Database seeded successfully!")
 
 if __name__ == "__main__":

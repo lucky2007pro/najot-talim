@@ -1,4 +1,4 @@
-const CACHE_NAME = 'space-edu-v7';
+const CACHE_NAME = 'space-edu-v8';
 const ASSETS = [
     './',
     './index.html',
@@ -15,6 +15,7 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', event => {
+    self.skipWaiting(); // Immediately activate new SW
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(cache => cache.addAll(ASSETS))
@@ -30,13 +31,19 @@ self.addEventListener('fetch', event => {
         return;
     }
 
+    // Network-first strategy: try network, fallback to cache
     event.respondWith(
-        caches.match(event.request)
+        fetch(event.request)
             .then(response => {
-                if (response) {
-                    return response;
-                }
-                return fetch(event.request);
+                // Cache the fresh response
+                const responseClone = response.clone();
+                caches.open(CACHE_NAME).then(cache => {
+                    cache.put(event.request, responseClone);
+                });
+                return response;
+            })
+            .catch(() => {
+                return caches.match(event.request);
             })
     );
 });
