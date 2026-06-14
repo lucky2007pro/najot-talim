@@ -27,7 +27,8 @@ function showScreen(screenName) {
     // Basic re-trigger animation
     screens[screenName].style.animation = 'none';
     screens[screenName].offsetHeight; 
-    screens[screenName].style.animation = null; 
+    screens[screenName].style.animation = ''; 
+    screens[screenName].style.opacity = '1'; // Force opacity
 }
 
 // --- Network / Offline Helper ---

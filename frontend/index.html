@@ -236,15 +236,17 @@
     <script>
         // Switch from Landing to App
         function enterApp() {
+            if (typeof init !== "function") {
+                alert("Iltimos, dastur to'liq yuklanishini biroz kuting...");
+                return;
+            }
             document.getElementById('landing-page').classList.add('hidden');
             document.getElementById('app-container').classList.remove('hidden');
             document.body.style.overflow = 'hidden'; // App uses absolute floating panels
             
             // Start the actual app logic
-            if (typeof init === "function") {
-                init();
-                showScreen('intro');
-            }
+            init();
+            showScreen('intro');
         }
 
         function restartApp() {
