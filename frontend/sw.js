@@ -1,4 +1,4 @@
-const CACHE_NAME = 'space-edu-v2';
+const CACHE_NAME = 'space-edu-v3';
 const ASSETS = [
     './',
     './index.html',
@@ -9,7 +9,7 @@ const ASSETS = [
     './assets/mars.png',
     './assets/astronaut.png',
     './assets/trophy.png',
-    'https://unpkg.com/@splinetool/viewer@1.9.54/build/spline-viewer.js',
+    './assets/space_bg.png',
     'https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap'
 ];
 
