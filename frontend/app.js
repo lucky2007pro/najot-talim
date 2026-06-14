@@ -80,8 +80,6 @@ async function init() {
     }
 }
 
-}
-
 // --- Interactive Explorer ---
 function openExplorer() {
     showScreen('explorer');
