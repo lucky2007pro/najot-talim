@@ -1,0 +1,241 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+
+:root {
+    --primary: #6366f1;
+    --primary-hover: #4f46e5;
+    --text-main: #ffffff;
+    --text-muted: #cbd5e1;
+    --glass-bg: rgba(15, 23, 42, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+    background-color: transparent;
+    color: var(--text-main);
+    overflow-x: hidden;
+}
+
+/* Background Spline */
+.spline-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1; /* Send to back */
+}
+
+spline-viewer {
+    width: 100%;
+    height: 100%;
+}
+
+/* UI Overlay Container */
+.ui-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none; /* Let clicks pass through to Spline if needed */
+}
+
+/* Glassmorphism Panel */
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    border-radius: 24px;
+    padding: 40px;
+    width: 90%;
+    max-width: 600px;
+    text-align: center;
+    pointer-events: auto; /* Enable clicks inside the panel */
+    animation: fadeIn 0.8s ease-out forwards;
+    transform: translateY(20px);
+    opacity: 0;
+}
+
+/* Floating animation for elements */
+@keyframes floatAnim {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+.float-element {
+    animation: floatAnim 3s ease-in-out infinite;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Typography */
+h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #a5b4fc, #c084fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+}
+
+/* Buttons */
+.btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 18px 40px; /* Bigger buttons for kids */
+    font-size: 1.4rem;
+    font-weight: 800;
+    font-family: 'Outfit', sans-serif;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy hover */
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn:hover {
+    background: var(--primary-hover);
+    transform: scale(1.05) translateY(-4px); /* Bouncy effect */
+    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.6);
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: none;
+}
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Layout Utilities */
+.hidden {
+    display: none !important;
+}
+
+.media-container img, .media-container video {
+    width: 100%;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    max-height: 250px;
+    object-fit: cover;
+}
+
+/* Quiz Choices */
+.choices-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.choice-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.choice-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.choice-btn.selected {
+    background: var(--primary);
+    border-color: var(--primary-hover);
+}
+
+.choice-btn.correct {
+    background: #22c55e;
+    border-color: #16a34a;
+    box-shadow: 0 0 15px rgba(34, 197, 94, 0.6);
+}
+
+.choice-btn.wrong {
+    background: #ef4444;
+    border-color: #dc2626;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+}
+
+/* Progress Bar */
+.progress-container {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #6366f1, #a855f7);
+    width: 0%;
+    transition: width 0.4s ease;
+}
+
+/* Score display */
+.score-display {
+    font-size: 5rem;
+    font-weight: 800;
+    color: #facc15; /* Yellow/Gold for kids */
+    margin: 20px 0;
+    text-shadow: 0 0 30px rgba(250, 204, 21, 0.5);
+    animation: floatAnim 2s infinite ease-in-out;
+}
+
+/* Responsive constraints */
+@media (max-width: 600px) {
+    .glass-panel {
+        padding: 24px;
+        width: 95%;
+    }
+    h1 { font-size: 2.2rem; }
+    h2 { font-size: 1.6rem; }
+    .btn { padding: 14px 24px; font-size: 1.2rem; }
+    .score-display { font-size: 3.5rem; }
+}

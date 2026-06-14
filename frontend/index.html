@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koinot Sayohati</title>
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Tailwind CSS ulash (bitta fayl uchun CDN tizimi) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fontlar uchun (Fredoka va Nunito) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+    <!-- Spline Viewer Web Component -->
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.54/build/spline-viewer.js"></script>
+    <style>
+        body { font-family: 'Nunito', sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
+        .font-fredoka { font-family: 'Fredoka', sans-serif; }
+        
+        /* Spline in background */
+        .spline-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            pointer-events: none; /* Prevent spline from stealing clicks */
+        }
+        spline-viewer {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Make landing page slightly transparent to see spline */
+        #landing-page {
+            position: relative;
+            z-index: 50;
+        }
+
+        .bg-landing {
+            background-color: rgba(36, 10, 75, 0.85); /* Semi-transparent */
+        }
+        .bg-hero {
+            background: linear-gradient(to right, rgba(74, 27, 140, 0.85), rgba(101, 36, 166, 0.85), rgba(59, 21, 115, 0.85));
+        }
+        .bg-works {
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Fix app container overlapping */
+        #app-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            min-height: 100vh;
+            z-index: 60;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white">
+
+    <!-- 3D Background -->
+    <div class="spline-container">
+        <spline-viewer url="https://prod.spline.design/JZm6Ed98KrEJLUw6/scene.splinecode"></spline-viewer>
+    </div>
+
+    <!-- LANDING PAGE -->
+    <div id="landing-page">
+        <!-- Header qismi -->
+        <header class="bg-landing text-white py-3 px-6 backdrop-blur-md border-b border-white/10">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between">
+                <div class="flex items-center mb-4 md:mb-0 gap-2">
+                    <div class="w-24 h-12 bg-white/10 border border-white/20 rounded flex items-center justify-center font-fredoka text-[14px] tracking-widest text-center leading-tight">
+                        🚀<br/>KOINOT
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center md:items-end w-full md:w-auto">
+                    <nav class="flex flex-wrap items-center justify-center md:justify-end gap-x-4 lg:gap-x-6 gap-y-2 font-bold text-sm lg:text-base">
+                        <a href="#" class="border-b-[3px] border-white pb-0.5">Ota-onalar</a>
+                        <a href="#" class="hover:text-gray-300">O'qituvchilar</a>
+                        <a href="#" class="hover:text-gray-300">Sharhlar</a>
+                        <button class="bg-[#6025A9] hover:bg-[#732EC6] text-white px-5 py-1.5 rounded-full border-2 border-[#541D99] shadow-[0_3px_0_#3A1171] active:translate-y-[3px] active:shadow-none transition-all ml-2">Kirish</button>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <!-- Asosiy Banner (Hero) qismi -->
+        <section class="bg-hero text-white px-6 py-12 lg:py-20 relative backdrop-blur-sm">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row gap-12 lg:gap-20 items-center">
+                <!-- Chap tomon: Rasm joyi -->
+                <div class="w-full md:w-1/2 flex justify-center z-10">
+                    <div class="relative w-full max-w-[500px] aspect-[4/3] bg-gradient-to-b from-blue-900/40 to-purple-900/40 border-[6px] border-blue-500 rounded-3xl flex items-center justify-center backdrop-blur-sm shadow-2xl overflow-hidden">
+                        <!-- AI image for hero -->
+                        <img src="./assets/astronaut.png" alt="Astronaut" class="w-full h-full object-cover">
+                        <div class="absolute bottom-[-20px] bg-[#6025A9] border-[3px] border-[#3A1171] px-6 py-2 rounded-xl text-center shadow-lg">
+                            <span class="font-fredoka text-xl lg:text-2xl text-white">YOSH FAZOGIR</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- O'ng tomon: Matnlar -->
+                <div class="w-full md:w-1/2 space-y-6 lg:space-y-8 text-center md:text-left z-10">
+                    <h1 class="text-4xl lg:text-5xl font-fredoka font-bold leading-tight drop-shadow-md">
+                        Bolalar uchun onlayn ta'lim -<br/>Koinot Sirlari
+                    </h1>
+                    <ul class="space-y-5 text-[17px] lg:text-[21px] font-bold">
+                        <li class="flex items-start md:items-center space-x-3 text-left">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="text-[#00D2D3] shrink-0 mt-0.5 md:mt-0"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span>100 dan ortiq interaktiv darsliklar va o'yinlar</span>
+                        </li>
+                        <li class="flex items-start md:items-center space-x-3 text-left">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="text-[#00D2D3] shrink-0 mt-0.5 md:mt-0"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span>Bolalar bir vaqtning o'zida o'ynaydi va o'rganadi</span>
+                        </li>
+                    </ul>
+                    <div class="pt-2">
+                        <button onclick="enterApp()" class="bg-[#00D2D3] hover:bg-[#1DE4E4] text-white font-extrabold text-xl lg:text-2xl px-10 py-3.5 rounded-full shadow-[0_6px_0_#00A3A3] active:translate-y-[6px] active:shadow-none transition-all w-full md:w-auto tracking-wide">
+                            Bepul Boshlash
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pastki "How it works" qismi -->
+        <section class="py-16 lg:py-24 px-6 bg-works text-gray-800 relative backdrop-blur-md">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row gap-12 lg:gap-20 items-center">
+                
+                <!-- Chap Tomon -->
+                <div class="w-full md:w-1/2 space-y-10 lg:space-y-12">
+                    <h2 class="text-4xl lg:text-[44px] font-fredoka font-bold text-[#2A055A]">
+                        Qanday ishlaydi
+                    </h2>
+
+                    <div class="space-y-8">
+                        <div class="flex gap-4 lg:gap-6">
+                            <div class="shrink-0 mt-1">
+                                <span class="inline-block bg-[#8B52D9] text-white font-fredoka text-xl lg:text-2xl font-bold px-5 py-1.5 rounded-xl rotate-[-4deg] shadow-[0_4px_0_#6234A5] border-[3px] border-[#542199]">
+                                    Oson
+                                </span>
+                            </div>
+                            <p class="text-xl lg:text-[22px] font-bold text-gray-800 leading-snug">
+                                Bolalar mustaqil foydalanishi va o'rganishi uchun juda oddiy
+                            </p>
+                        </div>
+
+                        <div class="flex gap-4 lg:gap-6">
+                            <div class="shrink-0 mt-1">
+                                <span class="inline-block bg-[#A855F7] text-white font-fredoka text-xl lg:text-2xl font-bold px-5 py-1.5 rounded-xl rotate-[4deg] shadow-[0_4px_0_#7E22CE] border-[3px] border-[#6B21A8]">
+                                    Qiziqarli
+                                </span>
+                            </div>
+                            <p class="text-xl lg:text-[22px] font-bold text-gray-800 leading-snug">
+                                Koinotga bo'lgan qiziqishni uyg'otadigan ijodiy yondashuv
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- O'ng tomon: Video uchun joy -->
+                <div class="w-full md:w-1/2">
+                    <div class="relative w-full aspect-video bg-[#542199] rounded-[2rem] border-4 border-[#3A1073] overflow-hidden shadow-2xl flex flex-col items-center justify-center p-6">
+                        <!-- Videoni kiritish -->
+                        <video controls class="absolute inset-0 w-full h-full object-cover z-20 rounded-[1.8rem]">
+                            <source src="./media/Robot_waving_in_outer_space_202606141154_2.mp4" type="video/mp4">
+                            Sizning brauzeringiz videoni qo'llab-quvvatlamaydi.
+                        </video>
+                        
+                        <!-- Video orqasida qolib ketadigan dekorlar (ular video o'ynamasdan oldin ko'rinishi mumkin) -->
+                        <div class="absolute bottom-[-10%] left-[-5%] w-40 h-40 bg-white/10 border-2 border-white/20 rounded-full flex items-center justify-center font-bold text-white/40 rotate-[15deg] overflow-hidden z-10">
+                            <img src="./assets/sun.png" alt="Sun">
+                        </div>
+                        <div class="absolute bottom-[-10%] right-[-5%] w-40 h-48 bg-white/10 border-2 border-white/20 rounded-t-full flex items-center justify-center font-bold text-white/40 -rotate-[15deg] overflow-hidden z-10">
+                            <img src="./assets/earth.png" alt="Earth">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </div> <!-- END LANDING PAGE -->
+
+
+    <!-- APPLICATION SCREENS (Hidden initially) -->
+    <div id="app-container" class="hidden ui-layer" style="position:fixed;">
+        
+        <!-- Screen 1: Intro -->
+        <div id="screen-intro" class="glass-panel float-element hidden">
+            <img src="./assets/astronaut.png" alt="Astronaut" style="width: 150px; margin: 0 auto 20px; display: block; animation: floatAnim 4s infinite;">
+            <h1 id="intro-title" class="font-fredoka text-4xl">Yuklanmoqda...</h1>
+            <p id="intro-desc">Koinot olamiga xush kelibsiz!</p>
+            <button class="btn" id="btn-start" onclick="startEducation()">Boshlash 🚀</button>
+        </div>
+
+        <!-- Screen 2: Education -->
+        <div id="screen-education" class="glass-panel hidden">
+            <div class="progress-container">
+                <div id="edu-progress" class="progress-bar"></div>
+            </div>
+            <div class="media-container" id="edu-media">
+                <!-- Image or Video will be injected here -->
+            </div>
+            <h2 id="edu-title" class="font-fredoka text-3xl text-[#facc15]">Mavzu</h2>
+            <p id="edu-content" class="text-white text-xl">Ma'lumot...</p>
+            <button class="btn" id="btn-next-edu" onclick="nextEducation()">Keyingisi ➡️</button>
+        </div>
+
+        <!-- Screen 3: Quiz -->
+        <div id="screen-quiz" class="glass-panel hidden">
+            <div class="progress-container">
+                <div id="quiz-progress" class="progress-bar"></div>
+            </div>
+            <h2 id="quiz-question" class="font-fredoka text-3xl">Savol matni</h2>
+            <div class="choices-grid" id="quiz-choices">
+                <!-- Choices will be injected here -->
+            </div>
+            <button class="btn" id="btn-next-quiz" onclick="nextQuiz()" disabled>Javobni tasdiqlash ✅</button>
+        </div>
+
+        <!-- Screen 4: Result -->
+        <div id="screen-result" class="glass-panel float-element hidden">
+            <img src="./assets/trophy.png" alt="Trophy" style="width: 180px; margin: 0 auto; display: block;">
+            <h1 class="font-fredoka text-4xl">Natija!</h1>
+            <div id="score-display" class="score-display font-fredoka">0/0</div>
+            <p id="result-message" class="text-xl">Zo'r!</p>
+            <button class="btn" onclick="restartApp()">Qaytadan 🔄</button>
+        </div>
+
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        // Switch from Landing to App
+        function enterApp() {
+            document.getElementById('landing-page').classList.add('hidden');
+            document.getElementById('app-container').classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // App uses absolute floating panels
+            
+            // Start the actual app logic
+            if (typeof init === "function") {
+                init();
+                showScreen('intro');
+            }
+        }
+
+        function restartApp() {
+            // Optional: return to landing page or just restart quiz
+            document.getElementById('landing-page').classList.remove('hidden');
+            document.getElementById('app-container').classList.add('hidden');
+            document.body.style.overflow = 'auto'; // allow scroll for landing
+        }
+    </script>
+    <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker registered!', reg.scope))
+                    .catch(err => console.log('SW registration failed:', err));
+            });
+        }
+    </script>
+</body>
+</html>
