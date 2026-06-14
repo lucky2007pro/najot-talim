@@ -1,7 +1,7 @@
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Topic, Section, Question, Choice, UserAttempt
+from .models import Topic, Section, Question, Choice, UserAttempt, UserProfile, UserProgress
 from .serializers import TopicSerializer, SectionSerializer, QuestionSerializer
 
 class TopicListView(generics.ListAPIView):
