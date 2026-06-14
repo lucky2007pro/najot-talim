@@ -1,7 +1,8 @@
-const CACHE_NAME = 'space-edu-v5';
+const CACHE_NAME = 'space-edu-v6';
 const ASSETS = [
     './',
     './index.html',
+    './explorer.html',
     './style.css',
     './app.js',
     './assets/sun.png',

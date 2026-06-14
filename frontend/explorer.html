@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koinot Xaritasi</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Nunito', sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
+        .font-fredoka { font-family: 'Fredoka', sans-serif; }
+        .static-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            pointer-events: none;
+            object-fit: cover;
+        }
+        #app-container {
+            position: relative;
+            z-index: 60;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body class="text-white">
+
+    <img src="./assets/space_bg.png" alt="Space Background" class="static-bg">
+
+    <div id="app-container">
+        <div class="glass-panel w-full" style="max-width: 1000px; padding: 30px; opacity: 1; transform: none; animation: none;">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+                <h1 class="font-fredoka text-4xl text-[#facc15] m-0">Koinot Xaritasi</h1>
+                <a href="index.html" class="btn btn-secondary text-lg" style="text-decoration: none;">🏠 Asosiy sahifaga qaytish</a>
+            </div>
+            
+            <div id="planet-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Planets injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div id="planet-modal" class="fixed inset-0 bg-[#1e1b4b]/95 backdrop-blur-xl hidden flex-col items-center justify-center z-50 p-6 transition-all">
+        <div class="max-w-2xl w-full flex flex-col items-center text-center">
+            <img id="modal-img" src="" alt="" class="w-48 h-48 md:w-80 md:h-80 object-cover rounded-full shadow-[0_0_60px_rgba(168,85,247,0.8)] mb-8 float-element border-4 border-[#a855f7]">
+            <h2 id="modal-title" class="font-fredoka text-5xl text-[#facc15] mb-6 drop-shadow-lg">Name</h2>
+            <p id="modal-desc" class="text-2xl md:text-3xl text-white leading-relaxed mb-10 drop-shadow-md">Description</p>
+            <button onclick="closePlanetDetail()" class="bg-[#ef4444] hover:bg-[#dc2626] text-white font-fredoka text-2xl px-10 py-4 rounded-full shadow-[0_4px_0_#b91c1c] active:translate-y-[4px] active:shadow-none transition-all">Yopish ❌</button>
+        </div>
+    </div>
+
+    <script>
+        const planetsData = [
+            { name: "Quyosh", img: "https://upload.wikimedia.org/wikipedia/commons/b/b4/The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg", desc: "Quyosh tizimining markazi bo'lgan bahaybat va juda issiq yulduz." },
+            { name: "Merkuriy", img: "https://upload.wikimedia.org/wikipedia/commons/4/4a/Mercury_in_true_color.jpg", desc: "Quyoshga eng yaqin va eng tez aylanadigan kichik sayyora. Unda havo yo'q." },
+            { name: "Venera", img: "https://upload.wikimedia.org/wikipedia/commons/e/e5/Venus-real_color.jpg", desc: "Eng issiq sayyora. U osmonda tunda juda yorqin yulduzdek ko'rinadi." },
+            { name: "Yer", img: "https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg", desc: "Bizning uyimiz. Hayot, o'simliklar va suv bor bo'lgan yagona ajoyib sayyora!" },
+            { name: "Mars", img: "https://upload.wikimedia.org/wikipedia/commons/0/02/OSIRIS_Mars_true_color.jpg", desc: "Qizil sayyora. Uning tuprog'ida temir moddasi ko'p bo'lgani uchun qizil rangda." },
+            { name: "Yupiter", img: "https://upload.wikimedia.org/wikipedia/commons/e/e2/Jupiter.jpg", desc: "Eng katta sayyora. U asosan gazlardan iborat va yuzasida bahaybat bo'ronlar aylanib yuradi." },
+            { name: "Saturn", img: "https://upload.wikimedia.org/wikipedia/commons/c/c7/Saturn_during_Equinox.jpg", desc: "Koinotdagi eng go'zal sayyoralardan biri, uning atrofida muz va toshlardan iborat chiroyli halqalari bor." },
+            { name: "Uran", img: "https://upload.wikimedia.org/wikipedia/commons/3/3d/Uranus2.jpg", desc: "Sovuq va moviy sayyora. U Quyosh atrofida xuddi dumalab ketayotgandek yonboshlab aylanadi." },
+            { name: "Neptun", img: "https://upload.wikimedia.org/wikipedia/commons/6/63/Neptune_-_Voyager_2_%2829347980845%29_flatten_crop.jpg", desc: "Quyoshdan eng uzoqda joylashgan, juda sovuq va kuchli shamollar esadigan ko'k sayyora." }
+        ];
+
+        window.onload = () => {
+            const grid = document.getElementById('planet-grid');
+            planetsData.forEach((p, idx) => {
+                const card = document.createElement('div');
+                card.className = 'bg-white/10 border border-white/20 rounded-3xl p-6 cursor-pointer hover:bg-white/20 transition-all transform hover:scale-105 hover:-translate-y-2 shadow-xl flex flex-col items-center justify-center';
+                card.onclick = () => showPlanetDetail(idx);
+                card.innerHTML = `
+                    <img src="${p.img}" alt="${p.name}" class="w-32 h-32 md:w-40 md:h-40 object-cover rounded-full mb-4 shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                    <h3 class="font-fredoka text-2xl text-white drop-shadow-md">${p.name}</h3>
+                `;
+                grid.appendChild(card);
+            });
+        };
+
+        function showPlanetDetail(idx) {
+            const p = planetsData[idx];
+            document.getElementById('modal-title').innerText = p.name;
+            document.getElementById('modal-desc').innerText = p.desc;
+            document.getElementById('modal-img').src = p.img;
+            
+            const modal = document.getElementById('planet-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closePlanetDetail() {
+            const modal = document.getElementById('planet-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+    </script>
+</body>
+</html>
