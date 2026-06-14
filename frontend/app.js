@@ -10,8 +10,115 @@ let state = {
     answers: {},
     selectedChoiceId: null,
     selectedChoiceIsCorrect: false,
-    score: 0 // Local offline score tracking
+    score: 0, // Local offline score tracking
+    user: null, // User profile data
+    token: localStorage.getItem('access_token') || null
 };
+
+let authMode = 'login'; // 'login' or 'register'
+
+// --- Audio TTS ---
+function playTTS(elementId) {
+    const text = document.getElementById(elementId).innerText;
+    if (!text) return;
+    
+    // Stop any ongoing speech
+    window.speechSynthesis.cancel();
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'uz-UZ'; // Try Uzbek
+    // Fallback language handling could be added here
+    window.speechSynthesis.speak(utterance);
+}
+
+// --- Auth Handling ---
+function showAuthModal(mode) {
+    authMode = mode;
+    document.getElementById('auth-title').innerText = mode === 'login' ? 'Kirish' : "Ro'yxatdan o'tish";
+    document.getElementById('auth-error').classList.add('hidden');
+    document.getElementById('auth-modal').classList.remove('hidden');
+    document.getElementById('auth-modal').classList.add('flex');
+}
+
+function closeAuthModal() {
+    document.getElementById('auth-modal').classList.add('hidden');
+    document.getElementById('auth-modal').classList.remove('flex');
+}
+
+async function handleAuth(e) {
+    e.preventDefault();
+    const username = document.getElementById('auth-username').value;
+    const password = document.getElementById('auth-password').value;
+    const errorEl = document.getElementById('auth-error');
+    
+    try {
+        const endpoint = authMode === 'login' ? '/auth/login/' : '/auth/register/';
+        const res = await fetch(`${API_BASE}${endpoint}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
+        
+        const data = await res.json();
+        
+        if (!res.ok) {
+            throw new Error(data.error || data.detail || 'Xatolik yuz berdi');
+        }
+        
+        // Save token
+        const token = authMode === 'login' ? data.access : data.tokens.access;
+        localStorage.setItem('access_token', token);
+        state.token = token;
+        
+        closeAuthModal();
+        await fetchProfile();
+        
+    } catch (err) {
+        errorEl.innerText = err.message;
+        errorEl.classList.remove('hidden');
+    }
+}
+
+function logout() {
+    localStorage.removeItem('access_token');
+    state.token = null;
+    state.user = null;
+    updateAuthUI();
+}
+
+async function fetchProfile() {
+    if (!state.token) return;
+    try {
+        const res = await fetch(`${API_BASE}/profile/`, {
+            headers: { 'Authorization': `Bearer ${state.token}` }
+        });
+        if (res.ok) {
+            const data = await res.json();
+            state.user = data.user;
+            updateAuthUI();
+        } else {
+            logout();
+        }
+    } catch (e) {
+        console.log("Offline, profile not fetched");
+    }
+}
+
+function updateAuthUI() {
+    const authBtns = document.getElementById('auth-buttons');
+    const profileHeader = document.getElementById('user-profile-header');
+    
+    if (state.user) {
+        authBtns.classList.add('hidden');
+        profileHeader.classList.remove('hidden');
+        document.getElementById('header-username').innerText = state.user.username;
+        document.getElementById('header-level').innerText = `Lvl ${state.user.profile.level}`;
+        document.getElementById('header-xp').innerText = state.user.profile.xp;
+    } else {
+        authBtns.classList.remove('hidden');
+        profileHeader.classList.add('hidden');
+    }
+}
 
 // Screens - only grab elements that exist on this page
 const screens = {};
@@ -33,8 +140,12 @@ function showScreen(screenName) {
 
 // --- Network / Offline Helper ---
 async function fetchWithCache(url, cacheKey) {
+    const headers = {};
+    if (state.token) {
+        headers['Authorization'] = `Bearer ${state.token}`;
+    }
     try {
-        const res = await fetch(url);
+        const res = await fetch(url, { headers });
         if (!res.ok) throw new Error('Server error: ' + res.status);
         const data = await res.json();
         localStorage.setItem(cacheKey, JSON.stringify(data));
@@ -51,6 +162,8 @@ async function fetchWithCache(url, cacheKey) {
 
 // --- Init & Intro ---
 async function init() {
+    await fetchProfile(); // Auth setup
+    
     try {
         const topics = await fetchWithCache(`${API_BASE}/intro/`, 'api_intro');
         if (topics && topics.length > 0) {
@@ -130,7 +243,12 @@ async function startQuiz() {
         // Eski cache'ni tozalaymiz
         localStorage.removeItem(`api_quiz_${state.topicId}`);
         
-        const res = await fetch(`${API_BASE}/topic/${state.topicId}/quiz/`);
+        const headers = {};
+        if (state.token) {
+            headers['Authorization'] = `Bearer ${state.token}`;
+        }
+        
+        const res = await fetch(`${API_BASE}/topic/${state.topicId}/quiz/`, { headers });
         if (!res.ok) throw new Error('Server error: ' + res.status);
         const data = await res.json();
         
@@ -255,22 +373,36 @@ async function submitQuiz() {
 
     try {
         const payload = {
-            username: "Yosh Fazogir",
+            username: state.user ? state.user.username : "Yosh Fazogir",
             answers: state.answers,
             total_questions: total_questions
         };
 
+        const headers = { 'Content-Type': 'application/json' };
+        if (state.token) {
+            headers['Authorization'] = `Bearer ${state.token}`;
+        }
+
         const res = await fetch(`${API_BASE}/topic/${state.topicId}/quiz/submit/`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: headers,
             body: JSON.stringify(payload)
         });
         
         const data = await res.json();
         
         showScreen('result');
+        
+        if (data.earned_xp) {
+            data.message += `\nSiz ${data.earned_xp} XP yig'dingiz! 🌟`;
+        }
+        
         document.getElementById('score-display').innerText = `${data.score} / ${data.max_score}`;
         document.getElementById('result-message').innerText = data.message;
+        
+        if (state.token) {
+            await fetchProfile(); // Update XP in header
+        }
         
         if (data.score === data.max_score && data.max_score > 0) {
             triggerVictoryConfetti();

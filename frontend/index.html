@@ -64,13 +64,24 @@
     <!-- LANDING PAGE -->
     <div id="landing-page">
         <!-- Header qismi -->
-        <header class="bg-landing text-white py-3 px-6 backdrop-blur-md border-b border-white/10">
-            <div class="max-w-7xl mx-auto flex items-center justify-center">
-                <div class="flex items-center gap-2">
-                    <div class="w-24 h-12 bg-white/10 border border-white/20 rounded flex items-center justify-center font-fredoka text-[14px] tracking-widest text-center leading-tight">
-                        🚀<br/>KOINOT
-                    </div>
+        <header class="bg-landing text-white py-3 px-6 backdrop-blur-md border-b border-white/10 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-24 h-12 bg-white/10 border border-white/20 rounded flex items-center justify-center font-fredoka text-[14px] tracking-widest text-center leading-tight">
+                    🚀<br/>KOINOT
                 </div>
+            </div>
+            
+            <div id="user-profile-header" class="hidden flex gap-4 items-center">
+                <div class="text-right">
+                    <p id="header-username" class="font-bold text-[#00D2D3]">Ism</p>
+                    <p class="text-sm font-fredoka"><span id="header-level">Lvl 1</span> | <span id="header-xp">0</span> XP</p>
+                </div>
+                <button onclick="logout()" class="text-sm bg-red-500/20 hover:bg-red-500/40 px-3 py-1.5 rounded-lg border border-red-500/30 transition-all">Chiqish</button>
+            </div>
+            
+            <div id="auth-buttons" class="flex gap-3">
+                <button onclick="showAuthModal('login')" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl font-bold border border-white/20 transition-all">Kirish</button>
+                <button onclick="showAuthModal('register')" class="bg-[#8B52D9] hover:bg-[#7a46c1] px-4 py-2 rounded-xl font-bold shadow-[0_4px_0_#542199] active:translate-y-[4px] active:shadow-none transition-all">Ro'yxatdan o'tish</button>
             </div>
         </header>
 
@@ -105,12 +116,26 @@
                     </ul>
                     <div class="pt-2">
                         <button onclick="enterApp()" class="bg-[#00D2D3] hover:bg-[#1DE4E4] text-white font-extrabold text-xl lg:text-2xl px-10 py-3.5 rounded-full shadow-[0_6px_0_#00A3A3] active:translate-y-[6px] active:shadow-none transition-all w-full md:w-auto tracking-wide">
-                            Bepul Boshlash
+                            Boshlash 🚀
                         </button>
                     </div>
                 </div>
             </div>
         </section>
+
+        <!-- Auth Modal -->
+        <div id="auth-modal" class="fixed inset-0 bg-[#1e1b4b]/95 backdrop-blur-md hidden flex-col items-center justify-center z-[100] p-6 transition-all">
+            <div class="glass-panel w-full max-w-md p-8 relative">
+                <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-2xl">❌</button>
+                <h2 id="auth-title" class="font-fredoka text-3xl mb-6 text-[#facc15]">Kirish</h2>
+                <form id="auth-form" onsubmit="handleAuth(event)" class="flex flex-col gap-4">
+                    <input type="text" id="auth-username" placeholder="Ismingiz (Username)" required class="p-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:border-[#00D2D3]">
+                    <input type="password" id="auth-password" placeholder="Parol" required class="p-3 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:border-[#00D2D3]">
+                    <p id="auth-error" class="text-red-400 text-sm hidden"></p>
+                    <button type="submit" id="auth-submit-btn" class="bg-[#00D2D3] hover:bg-[#1DE4E4] text-white font-bold py-3 rounded-xl mt-2 transition-all shadow-[0_4px_0_#00A3A3] active:translate-y-[4px] active:shadow-none">Tasdiqlash</button>
+                </form>
+            </div>
+        </div>
 
         <!-- Pastki "How it works" qismi -->
         <section class="py-16 lg:py-24 px-6 bg-works text-gray-800 relative backdrop-blur-md">
@@ -193,9 +218,12 @@
             <div class="media-container" id="edu-media">
                 <!-- Image or Video will be injected here -->
             </div>
-            <h2 id="edu-title" class="font-fredoka text-3xl text-[#facc15]">Mavzu</h2>
+            <div class="flex items-center justify-center gap-4 mb-4">
+                <h2 id="edu-title" class="font-fredoka text-3xl text-[#facc15] m-0">Mavzu</h2>
+                <button onclick="playTTS('edu-content')" class="bg-white/20 hover:bg-white/30 rounded-full p-2 text-2xl" title="Matnni eshitish">🔊</button>
+            </div>
             <p id="edu-content" class="text-white text-xl">Ma'lumot...</p>
-            <button class="btn" id="btn-next-edu" onclick="nextEducation()">Keyingisi ➡️</button>
+            <button class="btn mt-4" id="btn-next-edu" onclick="nextEducation()">Keyingisi ➡️</button>
         </div>
 
         <!-- Screen 3: Quiz -->

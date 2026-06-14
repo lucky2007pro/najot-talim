@@ -30,3 +30,25 @@ class TopicDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Topic
         fields = ['id', 'title', 'description', 'sections', 'questions']
+
+from django.contrib.auth.models import User
+from .models import UserProfile, UserProgress
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ['xp', 'level', 'badges']
+
+class UserSerializer(serializers.ModelSerializer):
+    profile = UserProfileSerializer(read_only=True)
+    
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'profile']
+
+class UserProgressSerializer(serializers.ModelSerializer):
+    topic = TopicSerializer(read_only=True)
+    
+    class Meta:
+        model = UserProgress
+        fields = ['topic', 'is_unlocked', 'is_completed']

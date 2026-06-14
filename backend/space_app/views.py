@@ -69,12 +69,40 @@ class QuizSubmitView(APIView):
                 pass
         
         # Save attempt
-        UserAttempt.objects.create(
-            username=username,
-            topic=topic,
-            score=score,
-            max_score=total_questions
-        )
+        if request.user.is_authenticated:
+            UserAttempt.objects.create(
+                username=request.user.username,
+                topic=topic,
+                score=score,
+                max_score=total_questions
+            )
+            
+            # Update Gamification Profile
+            profile, _ = UserProfile.objects.get_or_create(user=request.user)
+            # 1 to'g'ri javob uchun 10 XP
+            earned_xp = score * 10
+            profile.xp += earned_xp
+            
+            # Level Up Logic (Har 100 XP da 1 level)
+            new_level = (profile.xp // 100) + 1
+            if new_level > profile.level:
+                profile.level = new_level
+                # Level up animation or badge could be triggered here
+            profile.save()
+            
+            # Update Progress
+            progress, _ = UserProgress.objects.get_or_create(user=request.user, topic=topic)
+            if score == total_questions:
+                progress.is_completed = True
+            progress.save()
+            
+        else:
+            UserAttempt.objects.create(
+                username=username,
+                topic=topic,
+                score=score,
+                max_score=total_questions
+            )
 
         # Generate encouragement message
         percentage = (score / total_questions) * 100 if total_questions > 0 else 0
@@ -89,5 +117,46 @@ class QuizSubmitView(APIView):
             "score": score,
             "max_score": total_questions,
             "percentage": round(percentage, 2),
-            "message": message
+            "message": message,
+            "earned_xp": score * 10 if request.user.is_authenticated else 0
+        })
+
+from django.contrib.auth.models import User
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
+from .serializers import UserSerializer, UserProgressSerializer
+
+class RegisterView(APIView):
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        
+        if not username or not password:
+            return Response({"error": "Username va parol kiritilishi shart"}, status=status.HTTP_400_BAD_REQUEST)
+            
+        if User.objects.filter(username=username).exists():
+            return Response({"error": "Bu ism allaqachon band"}, status=status.HTTP_400_BAD_REQUEST)
+            
+        user = User.objects.create_user(username=username, password=password)
+        UserProfile.objects.create(user=user)
+        
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            "message": "Muvaffaqiyatli ro'yxatdan o'tdingiz!",
+            "tokens": {
+                "refresh": str(refresh),
+                "access": str(refresh.access_token),
+            },
+            "user": UserSerializer(user).data
+        })
+
+class ProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        progress = UserProgress.objects.filter(user=user)
+        return Response({
+            "user": UserSerializer(user).data,
+            "progress": UserProgressSerializer(progress, many=True).data
         })

@@ -66,3 +66,33 @@ class UserAttempt(models.Model):
     def __str__(self):
         name = self.username if self.username else "Noma'lum"
         return f"{name} - {self.score}/{self.max_score}"
+
+from django.contrib.auth.models import User
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    xp = models.PositiveIntegerField(default=0, verbose_name="Tajriba balli (XP)")
+    level = models.PositiveIntegerField(default=1, verbose_name="Daraja")
+    badges = models.JSONField(default=list, blank=True, verbose_name="Nishonlar")
+
+    class Meta:
+        verbose_name = "Foydalanuvchi Profili"
+        verbose_name_plural = "Foydalanuvchi Profillari"
+
+    def __str__(self):
+        return f"{self.user.username} (Lvl {self.level} - {self.xp} XP)"
+
+class UserProgress(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='progress')
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
+    is_unlocked = models.BooleanField(default=False)
+    is_completed = models.BooleanField(default=False)
+    last_accessed = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('user', 'topic')
+        verbose_name = "O'zlashtirish"
+        verbose_name_plural = "O'zlashtirishlar"
+
+    def __str__(self):
+        return f"{self.user.username} -> {self.topic.title} (Ochiq: {self.is_unlocked})"
